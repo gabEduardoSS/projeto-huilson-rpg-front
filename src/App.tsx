@@ -127,7 +127,7 @@ function CharacterCreationContainer(){
 
 type CharacterSelectionProps = {
   onSelect: (char: CharacterOption) => void;
-  selectedCharName?: string;
+  selectedCharId?: string;
 }
 
 type CharacterOption = {
@@ -141,7 +141,7 @@ type CharacterOption = {
   magia?: string;
 }
 
-function CharacterSelectionContainer({ onSelect, selectedCharName }: CharacterSelectionProps) {
+function CharacterSelectionContainer({ onSelect, selectedCharId }: CharacterSelectionProps) {
   const [characters, setCharacters] = useState<CharacterOption[]>([]);
 
   // Atualiza a lista quando o componente aparece
@@ -169,7 +169,7 @@ function CharacterSelectionContainer({ onSelect, selectedCharName }: CharacterSe
       <select 
         id="characterDropdown"
         className="character-selection-select" 
-        value={selectedCharName || ""} 
+        value={selectedCharId || ""} 
         onChange={handleSelectChange}
       >
         <option value="" disabled>Escolha um herói salvo...</option>
@@ -339,10 +339,9 @@ function App() {
                 setSelectedCharacter(char);
                 setIsInArena(false);
               }} 
-              selectedCharName={selectedCharacter?.nome} 
+              selectedCharId={selectedCharacter?.id.toString()} 
             />
 
-            {/* BOTÃO DE ENTRAR NA ARENA REFORMULADO */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                 <button 
                     className="user-creation-button"

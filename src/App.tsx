@@ -402,7 +402,7 @@ function App() {
             </div>
         )}
         
-        <ChatContainer currentUser={currentEntityName}/>
+        <ChatContainer currentUser={userName !== "" ? userName : "Anônimo"}/>
         <RpgContainer currentUser={currentEntityName}/>
       </div>
 

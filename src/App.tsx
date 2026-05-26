@@ -291,6 +291,7 @@ function ChatContainer({ currentUser }: { currentUser: string }){
           handleTextSubmit()
           if(text.trim() === "") return
           chatCon("CHAT", text, currentUser !== "" ? currentUser : "Anônimo")
+          setText("")
         }} className="text-input-container">
             <input type="text" ref={chatTextInputRef} name="chat-text-input" id="chatTextInput" className="text-input" value={text} onChange={handleTextChange}/>
             <button type="submit" id="chatTextSubmit" className="text-input-button" onClick={handleTextSubmit}>Enviar</button>
@@ -317,8 +318,7 @@ function App() {
   const handleEnterArena = () => {
     if (canEnterArena) {
       setIsInArena(true)
-      // Opcional: Envia log avisando que entrou na arena
-      // actionCon("BATTLE_LOG", "entrou na arena", selectedCharacter.nome)
+      actionCon("BATTLE_LOG", "entrou na arena", selectedCharacter.nome)
     }
   }
 
@@ -327,10 +327,8 @@ function App() {
   return (
     <div className="main-container">
       
-      {/* Alinhando no topo (flex-start) para os blocos não esticarem */}
       <div className="creation-container" style={{ alignItems: 'flex-start' }}>
         
-        {/* COLUNA ESQUERDA: Mesma largura do Chat (500px) */}
         <div style={{ display: 'flex', flexDirection: 'column', width: '500px', gap: '20px' }}>
             <UserSetContainer 
               userName={userName} 
@@ -342,7 +340,7 @@ function App() {
             <CharacterSelectionContainer 
               onSelect={(char) => {
                 setSelectedCharacter(char);
-                setIsInArena(false); // Reseta a arena se trocar de herói
+                setIsInArena(false);
               }} 
               selectedCharName={selectedCharacter?.nome} 
             />
@@ -355,12 +353,12 @@ function App() {
                     disabled={!canEnterArena}
                     style={{ 
                         width: '100%', 
-                        marginLeft: '0', // Tira a margem padrão do CSS
+                        marginLeft: '0',
                         height: '50px', 
                         fontSize: '18px',
                         fontWeight: 'bold',
                         backgroundColor: isInArena ? '#28a745' : 'transparent',
-                        color: isInArena ? 'white' : 'white', // Texto branco pra contrastar com o fundo azul
+                        color: isInArena ? 'white' : 'white',
                         borderColor: isInArena ? '#28a745' : 'white',
                         opacity: !canEnterArena ? 0.5 : 1,
                         cursor: !canEnterArena ? 'not-allowed' : 'pointer'

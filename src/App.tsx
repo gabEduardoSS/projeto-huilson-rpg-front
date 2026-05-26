@@ -176,8 +176,7 @@ function ChatContainer({ currentUser }: { currentUser: string }){
     iniciarConexao((data) => {
       if (data.tipo === "CHAT") {
         if (data.text.trim() === "") return
-        console.log("chat:", data.text);
-        setTextHistory(prev => [...prev, { sender: currentUser !== "" ? currentUser : "Anônimo", text: data.text }]);
+        setTextHistory(prev => [...prev, { sender: data.userName !== "" ? data.userName : "Anônimo", text: data.text }]);
         setText("")
       } 
     });

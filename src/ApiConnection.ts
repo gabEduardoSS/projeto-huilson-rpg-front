@@ -3,7 +3,7 @@ const ApiUrl = "http://awaken-smilingly-outsell.ngrok-free.dev"
 let socket: WebSocket | null = null;
 
 // 1. Função para iniciar a conexão
-export const iniciarConexao = (onLogReceived: (log: { tipo: string; text: string }) => void) => {
+export const iniciarConexao = (onLogReceived: (log: { tipo: string; text: string; userName: string }) => void) => {
   if (socket && (socket.readyState === WebSocket.CONNECTING || socket.readyState === WebSocket.OPEN)) {
     return;
   }

@@ -310,8 +310,7 @@ function App() {
     }
   }
 
-  // NOVA LÓGICA: Só pode entrar se tiver "isJoined" (nome) E um personagem selecionado
-  const canEnterArena = isJoined && selectedCharacter !== null;
+  const canEnterArena = selectedCharacter !== null;
 
   const handleEnterArena = () => {
     if (canEnterArena) {
@@ -365,11 +364,9 @@ function App() {
                     {isInArena ? "✓ NA ARENA" : "ENTRAR NA ARENA"}
                 </button>
                 
-                {/* Avisos dinâmicos do que está faltando */}
                 {!canEnterArena && (
                     <span style={{ color: '#ff4d4d', fontSize: '14px', textAlign: 'center', fontWeight: 'bold' }}>
-                        {!isJoined ? "Defina seu nome de usuário! " : ""}
-                        {isJoined && !selectedCharacter ? "Selecione um personagem!" : ""}
+                        {!selectedCharacter ? "Selecione um personagem!" : ""}
                     </span>
                 )}
             </div>
@@ -381,27 +378,33 @@ function App() {
 
       </div>
 
-      <div className="system-container" style={{ position: 'relative' }}>
-        {!isInArena && (
-            <div style={{
-                position: 'absolute',
-                top: 0, left: 0, right: 0, bottom: 0,
-                backgroundColor: 'rgba(255,255,255,0.7)',
-                zIndex: 10,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderRadius: '10px',
-                backdropFilter: 'blur(3px)'
-            }}>
-                <h2 style={{ color: '#095184', textShadow: '1px 1px 2px white', fontSize: '28px' }}>
-                    BLOQUEADO: Entre na Arena
-                </h2>
-            </div>
-        )}
+    <div className="system-container">
         
         <ChatContainer currentUser={userName !== "" ? userName : "Anônimo"}/>
-        <RpgContainer currentUser={currentEntityName}/>
+
+        <div style={{ position: 'relative' }}>
+            {!isInArena && (
+                <div style={{
+                    position: 'absolute',
+                    top: 0, left: 0, right: 0, bottom: 0,
+                    backgroundColor: 'rgba(255,255,255,0.7)',
+                    zIndex: 10,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: '10px',
+                    backdropFilter: 'blur(3px)'
+                }}>
+                    <h2 style={{ color: '#095184', textShadow: '1px 1px 2px white', fontSize: '28px', textAlign: 'center' }}>
+                        BLOQUEADO <br/> Entre na Arena
+                    </h2>
+                </div>
+            )}
+            
+            <RpgContainer currentUser={currentEntityName}/>
+        </div>
+
       </div>
 
     </div>

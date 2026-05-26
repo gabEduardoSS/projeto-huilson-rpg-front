@@ -1,4 +1,4 @@
-const ApiUrl = "http://127.0.0.1:8080/api"
+const ApiUrl = "http://awaken-smilingly-outsell.ngrok-free.dev"
 
 let socket: WebSocket | null = null;
 
@@ -7,7 +7,7 @@ export const iniciarConexao = (onLogReceived: (log: { tipo: string; text: string
   if (socket && (socket.readyState === WebSocket.CONNECTING || socket.readyState === WebSocket.OPEN)) {
     return;
   }
-  socket = new WebSocket('ws://localhost:8080/api/log');
+  socket = new WebSocket('wss://awaken-smilingly-outsell.ngrok-free.dev/api/log');
 
   socket.onopen = () => {
     console.log("✅ Conectado com sucesso ao Spring Boot!");

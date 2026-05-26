@@ -1,7 +1,6 @@
 const ApiUrl = "http://127.0.0.1:8080/api"
 
 let socket: WebSocket | null = null;
-let onLogReceivedCallback: ((mapOf: { tipo: string; text: string }) => void) | null = null;
 
 // 1. Função para iniciar a conexão
 export const iniciarConexao = (onLogReceived: (log: { tipo: string; text: string }) => void) => {
@@ -22,7 +21,6 @@ export const iniciarConexao = (onLogReceived: (log: { tipo: string; text: string
     console.log("🔌 Conexão fechada. Código:", event.code, "Razão:", event.reason);
   };
   
-  onLogReceivedCallback = onLogReceived;
 
   socket.onmessage = (event) => {
     try {

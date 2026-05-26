@@ -29,8 +29,10 @@ export const iniciarConexao = (onLogReceived: (log: { tipo: string; text: string
       
       if (data.tipo === "BATTLE_LOG" || data.tipo === "SISTEMA") {
         onLogReceived(data);
+        console.log("Recebi um log de batalha:", data);
       } else if (data.tipo === "CHAT") {
         onLogReceived(data);
+        console.log("Recebi uma mensagem de chat:", data);
       }
     } catch (e) {
       // Se o servidor mandar texto puro por erro, ele cai aqui e não quebra o site

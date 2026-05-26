@@ -125,7 +125,7 @@ function CharacterCreationContainer(){
   )
 }
 
-function RpgContainer(){
+function RpgContainer({currentUser}: {currentUser: string}){
   const [battleLogs, setBattleLogs] = useState<string[]>([]);
 
   useEffect(() => {
@@ -146,15 +146,16 @@ function RpgContainer(){
       <div className="log-container">
         <div className="log-text">
           {battleLogs.map((log, index) => (
+            console.log(battleLogs),
             <p key={index}>{log}</p>
           ))}
         </div>
       </div>
       <div className="actions-container">
-        {ActionButton({ text: "Atacar", onClick: () => actionCon("BATTLE_ACTION", "atacar", 'teste') })}
-        {ActionButton({ text: "Defender", onClick: () => actionCon("BATTLE_ACTION", "defender", 'teste') })}
-        {ActionButton({ text: "Fugir", onClick: () => actionCon("BATTLE_ACTION", "fugir", 'teste') })}
-        {ActionButton({ text: "Poder", onClick: () => actionCon("BATTLE_ACTION", "poder", 'teste') })}
+        {ActionButton({ text: "Atacar", onClick: () => actionCon("BATTLE_ACTION", "atacar", currentUser) })}
+        {ActionButton({ text: "Defender", onClick: () => actionCon("BATTLE_ACTION", "defender", currentUser) })}
+        {ActionButton({ text: "Fugir", onClick: () => actionCon("BATTLE_ACTION", "fugir", currentUser) })}
+        {ActionButton({ text: "Poder", onClick: () => actionCon("BATTLE_ACTION", "poder", currentUser) })}
       </div>
     </div>
   )
@@ -242,8 +243,8 @@ function App() {
         <CharacterCreationContainer/>
       </div>
       <div className="system-container">
-        <ChatContainer currentUser={isJoined ? userName : ""}/>
-        <RpgContainer/>
+        <ChatContainer currentUser={isJoined ? userName : "Anônimo"}/>
+        <RpgContainer currentUser={isJoined ? userName : "Anônimo"}/>
       </div>
     </div>
   )

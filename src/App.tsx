@@ -379,14 +379,12 @@ function App() {
             </div>
         </div>
 
-        {/* COLUNA DIREITA: Mesma largura do RPG (500px) */}
         <div style={{ display: 'flex', flexDirection: 'column', width: '500px' }}>
             <CharacterCreationContainer/>
         </div>
 
       </div>
 
-      {/* SYSTEM CONTAINER (Inalterado, com o overlay de bloqueio) */}
       <div className="system-container" style={{ position: 'relative' }}>
         {!isInArena && (
             <div style={{

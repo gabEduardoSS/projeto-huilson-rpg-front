@@ -175,6 +175,7 @@ function ChatContainer({ currentUser }: { currentUser: string }){
   useEffect(() => {
     iniciarConexao((data) => {
       if (data.tipo === "CHAT") {
+        if (data.text.trim() === "") return
         console.log("chat:", data.text);
         setTextHistory(prev => [...prev, { sender: currentUser !== "" ? currentUser : "Anônimo", text: data.text }]);
         setText("")

@@ -129,16 +129,15 @@ function RpgContainer({currentUser}: {currentUser: string}){
   const [battleLogs, setBattleLogs] = useState<string[]>([]);
 
   useEffect(() => {
-    iniciarConexao((data) => {
-      if (data.tipo === "BATTLE_LOG") {
-        console.log("Recebi um log de batalha:", data.text);
-        setBattleLogs(prev => [...prev, data.text]);
-      } 
-    });
-    return () => {
-      encerrarConexao();
+    const escutarSocket = (data: any) => {
+        if (data.tipo === "BATTLE_LOG") {
+            setBattleLogs(prev => [...prev, data.text]);
+        }
     };
-
+    iniciarConexao(escutarSocket);
+    return () => {
+      encerrarConexao(escutarSocket);
+    };
   }, []);
 
   return (
@@ -146,7 +145,6 @@ function RpgContainer({currentUser}: {currentUser: string}){
       <div className="log-container">
         <div className="log-text">
           {battleLogs.map((log, index) => (
-            console.log(battleLogs),
             <p key={index}>{log}</p>
           ))}
         </div>
@@ -174,15 +172,14 @@ function ChatContainer({ currentUser }: { currentUser: string }){
   const [textHistory, setTextHistory] = useState<Message[]>([])
 
   useEffect(() => {
-    iniciarConexao((data) => {
-      if (data.tipo === "CHAT") {
-        if (data.text.trim() === "") return
-        setTextHistory(prev => [...prev, { sender: data.userName !== "" ? data.userName : "Anônimo", text: data.text }]);
-        setText("")
-      } 
-    });
+    const escutarSocket = (data: any) => {
+        if (data.tipo === "CHAT") {
+            setTextHistory(prev => [...prev, { sender: data.userName, text: data.text }]);
+        }
+    };
+    iniciarConexao(escutarSocket);
     return () => {
-      encerrarConexao();
+      encerrarConexao(escutarSocket);
     };
 
   }, []);
@@ -197,7 +194,6 @@ function ChatContainer({ currentUser }: { currentUser: string }){
 
   const handleTextSubmit = () => {
     chatTextInputRef.current?.focus()
-    if(text.trim() === "") return
   }
 
   return (
@@ -213,6 +209,7 @@ function ChatContainer({ currentUser }: { currentUser: string }){
         <form onSubmit={(e) => {
           e.preventDefault()
           handleTextSubmit()
+          if(text.trim() === "") return
           chatCon("CHAT", text, currentUser !== "" ? currentUser : "Anônimo")
         }} className="text-input-container">
             <input type="text" ref={chatTextInputRef} name="chat-text-input" id="chatTextInput" className="text-input" value={text} onChange={handleTextChange}/>

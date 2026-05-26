@@ -1,55 +1,54 @@
-const ApiUrl = "http://awaken-smilingly-outsell.ngrok-free.dev"
+const ApiUrl = "https://awaken-smilingly-outsell.ngrok-free.dev"
 
 let socket: WebSocket | null = null;
 
-// 1. Função para iniciar a conexão
-export const iniciarConexao = (onLogReceived: (log: { tipo: string; text: string; userName: string }) => void) => {
-  if (socket && (socket.readyState === WebSocket.CONNECTING || socket.readyState === WebSocket.OPEN)) {
+const listeners = new Set<(data: any) => void>();
+let timeoutFechamento: number | null = null;
+
+export const iniciarConexao = (onMessageReceived: (data: any) => void) => { 
+  listeners.add(onMessageReceived);
+
+  if (timeoutFechamento) {
+    clearTimeout(timeoutFechamento);
+    timeoutFechamento = null;
+    console.log("Fechamento cancelado: novo ouvinte chegou.");
+  }
+
+  if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
     return;
   }
-  socket = new WebSocket('wss://awaken-smilingly-outsell.ngrok-free.dev/api/log');
-
+  
+  socket = new WebSocket(ApiUrl.replace("http", "ws") + "/api/log");
   socket.onopen = () => {
-    console.log("✅ Conectado com sucesso ao Spring Boot!");
-  };
-
-  socket.onerror = (error) => {
-    console.error("❌ Erro no WebSocket:", error);
+    console.log("✅ CONECTADO AO KOTLIN!");
   };
 
   socket.onclose = (event) => {
-    console.log("🔌 Conexão fechada. Código:", event.code, "Razão:", event.reason);
+    console.log("🔌 CONEXÃO FECHADA. Código:", event.code, "Razão:", event.reason);
   };
-  
 
+  socket.onerror = (error) => {
+    console.error("❌ ERRO NO SOCKET:", error);
+  };
   socket.onmessage = (event) => {
-    try {
-      // Tenta transformar em JSON
-      const data = JSON.parse(event.data);
-      
-      if (data.tipo === "BATTLE_LOG" || data.tipo === "SISTEMA") {
-        onLogReceived(data);
-        console.log("Recebi um log de batalha:", data);
-      } else if (data.tipo === "CHAT") {
-        onLogReceived(data);
-        console.log("Recebi uma mensagem de chat:", data);
-      }
-    } catch (e) {
-      // Se o servidor mandar texto puro por erro, ele cai aqui e não quebra o site
-      console.warn("Recebi uma mensagem que não era JSON:", event.data);
-    }
-  };
-
-  socket.onclose = () => {
-    console.log("Conexão com o servidor encerrada.");
+    const data = JSON.parse(event.data);
+    // Quando chega mensagem, avisamos TODOS os ouvintes da lista!
+    listeners.forEach((callback) => callback(data));
   };
 };
 
-// 2. Função para fechar a conexão quando o usuário sair
-export const encerrarConexao = () => {
-if (socket && socket.readyState === WebSocket.OPEN) {
-    socket.close();
-    socket = null;
+export const encerrarConexao = (onMessageReceived: (data: any) => void) => {
+  listeners.delete(onMessageReceived);
+  
+if (listeners.size === 0 && socket) {
+    timeoutFechamento = window.setTimeout(() => {
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.close(1000, "Nenhum componente ouvindo");
+        socket = null;
+        console.log("🔌 WebSocket fechado por inatividade.");
+      }
+      timeoutFechamento = null;
+    }, 1000);
   }
 };
 
@@ -67,23 +66,29 @@ export function actionCon(tipo: string, action: string, userName: string){
 }
 
 export function chatCon(tipo: string, text: string, userName: string){
-  if(!socket || socket.readyState !== WebSocket.OPEN) {
-    console.error("WebSocket não está conectado.");
-    return;
-  }
   const send = {
     tipo: tipo,
     text: text,
     userName: userName
   }
-  socket?.send(JSON.stringify(send))
+  if(socket && socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify(send));
+  } else if(socket && socket.readyState === WebSocket.CONNECTING) {
+    socket.onopen = () => {
+      socket?.send(JSON.stringify(send));
+    };
+  } else{
+    console.error("WebSocket não está conectado e não pode enviar a mensagem.");
+  }
 }
 
 export function characterCon(character: { name: string; charClass: string; vida: string; forca: string; velocidade: string }){
   const requestOptions = {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true'
+     },
     body: JSON.stringify(character)
   }
-  fetch(`${ApiUrl}/character/create`, requestOptions)
+  fetch(`${ApiUrl}/character/save`, requestOptions)
 }

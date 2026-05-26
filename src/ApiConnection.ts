@@ -82,7 +82,7 @@ export function chatCon(tipo: string, text: string, userName: string){
   }
 }
 
-export function characterCon(character: { name: string; charClass: string; vida: string; forca: string; velocidade: string }){
+export function characterCreateCon(character: { name: string; charClass: string; vida: string; forca: string; velocidade: string }){
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json',
@@ -92,3 +92,21 @@ export function characterCon(character: { name: string; charClass: string; vida:
   }
   fetch(`${ApiUrl}/character/save`, requestOptions)
 }
+
+export const characterGetCon = async () => {
+  try {
+    const response = await fetch(`${ApiUrl}/character/getall`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true'
+      }
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Erro ao buscar personagens:", error);
+    return [];
+  }
+}
+

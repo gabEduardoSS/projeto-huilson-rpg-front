@@ -252,3 +252,39 @@
     background-color: rgb(9, 81, 132);
     color: white;
 }
+
+.character-selection-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 20px;
+    width: calc(500px - 40px);
+    border: 1px solid var(--borderColor);
+    border-radius: 10px;
+    background-color: var(--inputBackgroundColor);
+    color: black;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.character-selection-container label {
+    font-size: 18px;
+}
+
+.character-selection-select {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    height: 30px;
+    border: 1px solid var(--borderColor);
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.character-selection-container button {
+    width: 100%;
+    margin-left: 0;
+}

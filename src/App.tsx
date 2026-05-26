@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import './App.css'
-import { actionCon, characterCon, chatCon, iniciarConexao, encerrarConexao } from './ApiConnection'
+import { actionCon, characterCreateCon, chatCon, iniciarConexao, encerrarConexao, characterGetCon } from './ApiConnection'
 
 type ActionButtonProps = { text: string; onClick?: () => void }
 
@@ -73,7 +73,7 @@ function CharacterCreationContainer(){
 
   const handleCharacterSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
-    characterCon(character)
+    characterCreateCon(character)
     alert(`Personagem criado:\nNome: ${character.name}\nClasse: ${character.charClass}\nVida: ${character.vida}\nForça: ${character.forca}\nVelocidade: ${character.velocidade}`)
     setCharacter({
       name: "",
@@ -123,6 +123,86 @@ function CharacterCreationContainer(){
         
     </form>
   )
+}
+
+type CharacterSelectionProps = {
+  onSelect: (char: CharacterOption) => void;
+  selectedCharName?: string;
+}
+
+type CharacterOption = {
+  nome: string;
+  vida: string;
+  forca: string;
+  velocidade: string;
+  defesa?: string;
+  sagacidade?: string;
+  magia?: string;
+}
+
+function CharacterSelectionContainer({ onSelect, selectedCharName }: CharacterSelectionProps) {
+  const [characters, setCharacters] = useState<CharacterOption[]>([]);
+
+  // Atualiza a lista quando o componente aparece
+  useEffect(() => {
+      characterGetCon().then(data => setCharacters(data));
+  }, []);
+
+  // Função que lida com a mudança do select
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const nomeEscolhido = event.target.value;
+    // Encontra o objeto completo do personagem baseado no nome escolhido
+    const personagemEncontrado = characters.find(char => char.nome === nomeEscolhido);
+    
+    if (personagemEncontrado) {
+      onSelect(personagemEncontrado);
+    }
+  };
+
+  return (
+    <div className="character-selection-container">
+      <label htmlFor="characterDropdown">
+        Selecionar Personagem:
+      </label>
+      
+      {/* Classe CSS atualizada e inline styles removidos */}
+      <select 
+        id="characterDropdown"
+        className="character-selection-select" 
+        value={selectedCharName || ""} 
+        onChange={handleSelectChange}
+      >
+        <option value="" disabled>Escolha um herói salvo...</option>
+        
+        {characters.map((char, index) => {
+          // Lógica inteligente para descobrir a classe pelos atributos!
+          let classe = "Desconhecido"; 
+          if (char.defesa !== undefined) {
+            classe = "Guerreiro";
+          } else if (char.magia !== undefined) {
+            classe = "Mago";
+          } else if (char.sagacidade !== undefined) {
+            classe = "Ladino";
+          }
+
+          return (
+            <option key={index} value={char.nome}>
+              {char.nome} - {classe}
+            </option>
+          );
+        })}
+      </select>
+
+      {/* Inline style removido, a largura já é controlada pelo CSS */}
+      <button 
+         type="button"
+         className="user-creation-button" 
+         onClick={() => characterGetCon().then(setCharacters)}
+      >
+        Atualizar Lista do Banco
+      </button>
+    </div>
+  );
 }
 
 function RpgContainer({currentUser}: {currentUser: string}){
@@ -222,27 +302,114 @@ function ChatContainer({ currentUser }: { currentUser: string }){
 function App() {
   const [userName, setUserName] = useState("")
   const [isJoined, setIsJoined] = useState(false)
+  const [selectedCharacter, setSelectedCharacter] = useState<CharacterOption | null>(null)
+  const [isInArena, setIsInArena] = useState(false)
 
   const handleJoinSession = () => {
     if (userName.trim() !== "") {
       setIsJoined(true)
     }
   }
+
+  // NOVA LÓGICA: Só pode entrar se tiver "isJoined" (nome) E um personagem selecionado
+  const canEnterArena = isJoined && selectedCharacter !== null;
+
+  const handleEnterArena = () => {
+    if (canEnterArena) {
+      setIsInArena(true)
+      // Opcional: Envia log avisando que entrou na arena
+      // actionCon("BATTLE_LOG", "entrou na arena", selectedCharacter.nome)
+    }
+  }
+
+  const currentEntityName = selectedCharacter ? selectedCharacter.nome : (userName !== "" ? userName : "Anônimo");
+
   return (
     <div className="main-container">
-      <div className="creation-container">
-        <UserSetContainer 
-          userName={userName} 
-          setUserName={setUserName} 
-          onJoin={handleJoinSession}
-          isJoined={isJoined}
-        />
-        <CharacterCreationContainer/>
+      
+      {/* Alinhando no topo (flex-start) para os blocos não esticarem */}
+      <div className="creation-container" style={{ alignItems: 'flex-start' }}>
+        
+        {/* COLUNA ESQUERDA: Mesma largura do Chat (500px) */}
+        <div style={{ display: 'flex', flexDirection: 'column', width: '500px', gap: '20px' }}>
+            <UserSetContainer 
+              userName={userName} 
+              setUserName={setUserName} 
+              onJoin={handleJoinSession}
+              isJoined={isJoined}
+            />
+            
+            <CharacterSelectionContainer 
+              onSelect={(char) => {
+                setSelectedCharacter(char);
+                setIsInArena(false); // Reseta a arena se trocar de herói
+              }} 
+              selectedCharName={selectedCharacter?.nome} 
+            />
+
+            {/* BOTÃO DE ENTRAR NA ARENA REFORMULADO */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                <button 
+                    className="user-creation-button"
+                    onClick={handleEnterArena}
+                    disabled={!canEnterArena}
+                    style={{ 
+                        width: '100%', 
+                        marginLeft: '0', // Tira a margem padrão do CSS
+                        height: '50px', 
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                        backgroundColor: isInArena ? '#28a745' : 'transparent',
+                        color: isInArena ? 'white' : 'white', // Texto branco pra contrastar com o fundo azul
+                        borderColor: isInArena ? '#28a745' : 'white',
+                        opacity: !canEnterArena ? 0.5 : 1,
+                        cursor: !canEnterArena ? 'not-allowed' : 'pointer'
+                    }}
+                >
+                    {isInArena ? "✓ NA ARENA" : "ENTRAR NA ARENA"}
+                </button>
+                
+                {/* Avisos dinâmicos do que está faltando */}
+                {!canEnterArena && (
+                    <span style={{ color: '#ff4d4d', fontSize: '14px', textAlign: 'center', fontWeight: 'bold' }}>
+                        {!isJoined ? "Defina seu nome de usuário! " : ""}
+                        {isJoined && !selectedCharacter ? "Selecione um personagem!" : ""}
+                    </span>
+                )}
+            </div>
+        </div>
+
+        {/* COLUNA DIREITA: Mesma largura do RPG (500px) */}
+        <div style={{ display: 'flex', flexDirection: 'column', width: '500px' }}>
+            <CharacterCreationContainer/>
+        </div>
+
       </div>
-      <div className="system-container">
-        <ChatContainer currentUser={isJoined ? userName : "Anônimo"}/>
-        <RpgContainer currentUser={isJoined ? userName : "Anônimo"}/>
+
+      {/* SYSTEM CONTAINER (Inalterado, com o overlay de bloqueio) */}
+      <div className="system-container" style={{ position: 'relative' }}>
+        {!isInArena && (
+            <div style={{
+                position: 'absolute',
+                top: 0, left: 0, right: 0, bottom: 0,
+                backgroundColor: 'rgba(255,255,255,0.7)',
+                zIndex: 10,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: '10px',
+                backdropFilter: 'blur(3px)'
+            }}>
+                <h2 style={{ color: '#095184', textShadow: '1px 1px 2px white', fontSize: '28px' }}>
+                    BLOQUEADO: Entre na Arena
+                </h2>
+            </div>
+        )}
+        
+        <ChatContainer currentUser={currentEntityName}/>
+        <RpgContainer currentUser={currentEntityName}/>
       </div>
+
     </div>
   )
 }

@@ -131,6 +131,7 @@ type CharacterSelectionProps = {
 }
 
 type CharacterOption = {
+  id: number;
   nome: string;
   vida: string;
   forca: string;
@@ -150,9 +151,9 @@ function CharacterSelectionContainer({ onSelect, selectedCharName }: CharacterSe
 
   // Função que lida com a mudança do select
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const nomeEscolhido = event.target.value;
+    const id = event.target.value;
     // Encontra o objeto completo do personagem baseado no nome escolhido
-    const personagemEncontrado = characters.find(char => char.nome === nomeEscolhido);
+    const personagemEncontrado = characters.find(char => char.id === parseInt(id));
     
     if (personagemEncontrado) {
       onSelect(personagemEncontrado);
@@ -165,7 +166,6 @@ function CharacterSelectionContainer({ onSelect, selectedCharName }: CharacterSe
         Selecionar Personagem:
       </label>
       
-      {/* Classe CSS atualizada e inline styles removidos */}
       <select 
         id="characterDropdown"
         className="character-selection-select" 
@@ -175,7 +175,6 @@ function CharacterSelectionContainer({ onSelect, selectedCharName }: CharacterSe
         <option value="" disabled>Escolha um herói salvo...</option>
         
         {characters.map((char, index) => {
-          // Lógica inteligente para descobrir a classe pelos atributos!
           let classe = "Desconhecido"; 
           if (char.defesa !== undefined) {
             classe = "Guerreiro";
@@ -186,14 +185,13 @@ function CharacterSelectionContainer({ onSelect, selectedCharName }: CharacterSe
           }
 
           return (
-            <option key={index} value={char.nome}>
+            <option key={index} value={char.id}>
               {char.nome} - {classe}
             </option>
           );
         })}
       </select>
 
-      {/* Inline style removido, a largura já é controlada pelo CSS */}
       <button 
          type="button"
          className="user-creation-button" 

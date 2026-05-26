@@ -1,0 +1,254 @@
+:root{
+  --borderColor: white;
+  --inputBackgroundColor: rgb(226, 226, 226);
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    gap: 50px;
+}
+
+.creation-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 100px;
+}
+
+.user-creation-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    width: calc(500px - 40px);
+    height: calc(150px - 40px);
+    border: 1px solid var(--borderColor);
+    border-radius: 10px;
+    background-color: var(--inputBackgroundColor);
+    color: black;
+    font-size: 20px;
+}
+
+.user-creation-input{
+    border: none;
+    outline: none;
+    margin-left: 20px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    height: 30px;
+    border: 1px solid var(--borderColor);
+    background-color: transparent;
+}
+
+.user-creation-button{
+    background-color: transparent;
+    border-radius: 5px;
+    width: 80px;
+    cursor: pointer;
+    margin-left: 20px;
+    height: calc(50px - 10px);
+    border-style: ridge;
+}
+
+.character-creation-container{
+    display: flex;
+    flex-direction: column;
+    align-items: top;
+    justify-content: space-around;
+    padding: 20px;
+    width: calc(500px - 40px);
+    height: calc(150px - 40px);
+    border: 1px solid var(--borderColor);
+    border-radius: 10px;
+    background-color: var(--inputBackgroundColor);
+    color: black;
+    gap: 5px;
+}
+
+.character-name-class{
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: top;
+    gap: 10px;
+    width: 60%;
+}
+
+.character-name-class label{
+    font-size: 18px;
+}
+
+.character-name-class-input{
+    margin-left: 10px;
+    border: none;
+    outline: none;
+    padding: 5px 5px;
+    border-radius: 5px;
+    height: 30px;
+    border: 1px solid var(--borderColor);
+    background-color: transparent;
+}
+
+.character-stats{
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: top;
+    gap: 5px;
+    width: 35%;
+}
+
+.character-stats div{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.character-stats-input{
+    margin-left: 10px;
+    border: none;
+    outline: none;
+    padding: 5px 5px;
+    border-radius: 5px;
+    height: 20px;
+    width: 50px;
+    border: 1px solid var(--borderColor);
+    background-color: transparent;
+}
+
+.character-creation-container button{
+    width: calc(100% - 40px);
+}
+
+.system-container{
+    display: flex;
+    flex-direction: row;
+    gap: 100px;
+}
+
+.text-container {
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+    height: 750px;
+    border: 1px solid var(--borderColor);
+    border-radius: 10px;
+    background-color: rgb(9, 81, 132);
+    color: black;
+}
+
+.text-history-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    width: calc(100% - 40px);
+    height: calc(93% - 40px);
+    border-radius: 10px 10px 0 0;
+    color: black;
+    border-color: var(--borderColor);
+    background-color: var(--inputBackgroundColor);
+    overflow-y: auto;
+}
+
+.text-input-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 7%;
+    border-top: 1px solid black;
+    color: white;
+}
+
+.text-input{
+    border:none;
+    outline:none;
+    width: calc(85% - 20px);
+    padding-left: 20px;
+    border-radius: 0 0 0 10px;
+    border-right: 1px solid black;
+    border-color: white;
+    background-color: var(--inputBackgroundColor);
+}
+
+.text-input-button{
+    width: 15%;
+    border: none;
+    border-radius: 0 0 10px 0;
+    background-color: transparent;
+    cursor: pointer;
+    color: white;
+}
+
+.text-input-button:hover{
+    background-color: rgb(24, 125, 197);
+}
+
+.text-history-text{
+    text-wrap: balance;
+}
+
+.rpg-container{
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+    height: 750px;
+    border: 1px solid var(--borderColor);
+    border-radius: 10px;
+    background-color: var(--inputBackgroundColor);
+}
+
+.log-container{
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    width: calc(100% - 40px);
+    height: calc(93% - 40px);
+    border-radius: 10px 10px 0 0;
+    color: black;
+    border-color: var(--borderColor);
+    background-color: var(--inputBackgroundColor);
+    overflow-y: auto;
+}
+
+.actions-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    border:none;
+    height: 7%;
+    width: calc(100% - 40px);
+    padding: 0 20px;
+    border-color: white;
+    border-top: 1px solid black;
+    background-color: var(--inputBackgroundColor);
+    border-radius: 0 0 10px 10px;
+}
+
+.action-button{
+    border: none;
+    border-radius: 5px;
+    padding: 15px 25px;
+    background-color: transparent;
+    cursor: pointer;
+    color: black;
+    border-style: ridge;
+}
+
+.action-button:hover , .user-creation-button:hover{
+    background-color: rgb(24, 125, 197);
+    color: white;
+}
+
+.action-button:active , .user-creation-button:active{
+    background-color: rgb(9, 81, 132);
+    color: white;
+}

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import './App.css'
-import { actionCon, characterCreateCon, chatCon, iniciarConexao, encerrarConexao, characterGetCon } from './ApiConnection'
+import { actionCon, characterCreateCon, chatCon, iniciarConexao, encerrarConexao, characterGetCon, subscribeToBattleEnd } from './ApiConnection'
 
 type ActionButtonProps = { text: string; onClick?: () => void }
 
@@ -303,6 +303,13 @@ function App() {
   const [isJoined, setIsJoined] = useState(false)
   const [selectedCharacter, setSelectedCharacter] = useState<CharacterOption | null>(null)
   const [isInArena, setIsInArena] = useState(false)
+
+useEffect(() => {
+    subscribeToBattleEnd(() => {
+      console.log("A batalha terminou! Liberando o botão de entrar na arena...");
+      setIsInArena(false);
+    });
+  }, []);
 
   const handleJoinSession = () => {
     if (userName.trim() !== "") {

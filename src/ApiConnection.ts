@@ -5,6 +5,12 @@ let socket: WebSocket | null = null;
 const listeners = new Set<(data: any) => void>();
 let timeoutFechamento: number | null = null;
 
+let onBattleEndCallback: () => void = () => {};
+
+export const subscribeToBattleEnd = (callback: () => void) => {
+  onBattleEndCallback = callback;
+};
+
 export const iniciarConexao = (onMessageReceived: (data: any) => void) => { 
   listeners.add(onMessageReceived);
 
@@ -32,7 +38,13 @@ export const iniciarConexao = (onMessageReceived: (data: any) => void) => {
   };
   socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    // Quando chega mensagem, avisamos TODOS os ouvintes da lista!
+    console.log(data);
+    if(data.tipo === "BATTLE_END") {
+      if (onBattleEndCallback) {
+      onBattleEndCallback();
+    }
+    }
+
     listeners.forEach((callback) => callback(data));
   };
 };

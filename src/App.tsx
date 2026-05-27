@@ -214,7 +214,7 @@ function CharacterUpdateContainer({onSelect, selectedCharId}: CharacterSelection
             if (selectedCharId) {
               characterDeleteCon(parseInt(selectedCharId))
                 .then(() => {
-                  onSelect({ id: 0, nome: "", vida: "", forca: "", velocidade: "" });
+                  onSelect({char.id});
                   document.getElementById("refreshCharacterListButton")?.click();
                 })
             }

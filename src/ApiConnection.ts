@@ -52,12 +52,13 @@ if (listeners.size === 0 && socket) {
   }
 };
 
-export function actionCon(tipo: string, action: string, userName: string){
+export function actionCon(id: number,tipo: string, action: string, userName: string){
   if(!socket || socket.readyState !== WebSocket.OPEN) {
     console.error("WebSocket não está conectado.");
     return;
   }
   const send = {
+    id: id,
     tipo: tipo,
     action: action,
     userName: userName

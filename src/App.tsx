@@ -203,7 +203,7 @@ function CharacterSelectionContainer({ onSelect, selectedCharId }: CharacterSele
   );
 }
 
-function RpgContainer({currentUser}: {currentUser: string}){
+function RpgContainer({currentUser, id}: {currentUser: string, id: number}) {
   const [battleLogs, setBattleLogs] = useState<string[]>([]);
 
   useEffect(() => {
@@ -228,10 +228,10 @@ function RpgContainer({currentUser}: {currentUser: string}){
         </div>
       </div>
       <div className="actions-container">
-        {ActionButton({ text: "Atacar", onClick: () => actionCon("BATTLE_ACTION", "atacar", currentUser) })}
-        {ActionButton({ text: "Defender", onClick: () => actionCon("BATTLE_ACTION", "defender", currentUser) })}
-        {ActionButton({ text: "Fugir", onClick: () => actionCon("BATTLE_ACTION", "fugir", currentUser) })}
-        {ActionButton({ text: "Poder", onClick: () => actionCon("BATTLE_ACTION", "poder", currentUser) })}
+        {ActionButton({ text: "Atacar", onClick: () => actionCon(id, "BATTLE_ACTION", "atacar", currentUser) })}
+        {ActionButton({ text: "Defender", onClick: () => actionCon(id, "BATTLE_ACTION", "defender", currentUser) })}
+        {ActionButton({ text: "Fugir", onClick: () => actionCon(id, "BATTLE_ACTION", "fugir", currentUser) })}
+        {ActionButton({ text: "Poder", onClick: () => actionCon(id, "BATTLE_ACTION", "poder", currentUser) })}
       </div>
     </div>
   )
@@ -315,7 +315,7 @@ function App() {
   const handleEnterArena = () => {
     if (canEnterArena) {
       setIsInArena(true)
-      actionCon("BATTLE_LOG", "entrou na arena", selectedCharacter.nome)
+      actionCon(selectedCharacter.id, "BATTLE_JOIN", "entrou na arena", selectedCharacter.nome)
     }
   }
 
@@ -401,7 +401,7 @@ function App() {
                 </div>
             )}
             
-            <RpgContainer currentUser={currentEntityName}/>
+            <RpgContainer currentUser={currentEntityName} id={selectedCharacter?.id == undefined ? 0 : selectedCharacter.id}/>
         </div>
 
       </div>

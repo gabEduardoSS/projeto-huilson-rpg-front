@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import './App.css'
-import { actionCon, characterCreateCon, chatCon, iniciarConexao, encerrarConexao, characterGetCon, subscribeToBattleEnd } from './ApiConnection'
+import { actionCon, characterCreateCon, chatCon, iniciarConexao, encerrarConexao, characterGetCon, characterDeleteCon, subscribeToBattleEnd } from './ApiConnection'
 
 type ActionButtonProps = { text: string; onClick?: () => void }
 
@@ -52,7 +52,7 @@ type CharacterStats = {
   velocidade: string;
 }
 
-function CharacterCreationContainer(){
+function CharacterCreationContainer() {
   const [character, setCharacter] = useState<CharacterStats>({
     name: "",
     charClass: "",
@@ -87,7 +87,7 @@ function CharacterCreationContainer(){
 
   return (
     <form onSubmit={(e) => handleCharacterSubmit(e)} className="character-creation-container">
-      <div style={{ display: "flex", flexDirection: "row"}}>
+      <div style={{ display: "flex", flexDirection: "row", justifyContent: 'space-between', width: '100%' }}>
         <div className='character-name-class'>
           <div>
             <label htmlFor="characterNameInput">Nome:</label>
@@ -196,11 +196,34 @@ function CharacterSelectionContainer({ onSelect, selectedCharId }: CharacterSele
          type="button"
          className="user-creation-button" 
          onClick={() => characterGetCon().then(setCharacters)}
+         id="refreshCharacterListButton"
       >
         Atualizar Lista do Banco
       </button>
     </div>
   );
+}
+
+function CharacterUpdateContainer({onSelect, selectedCharId}: CharacterSelectionProps) {
+  return (
+    <div className="character-update-container">
+      <button 
+         type="button"
+         className="user-creation-button character-delete-button"
+          onClick={() => {
+            if (selectedCharId) {
+              characterDeleteCon(parseInt(selectedCharId))
+                .then(() => {
+                  onSelect({ id: 0, nome: "", vida: "", forca: "", velocidade: "" });
+                  document.getElementById("refreshCharacterListButton")?.click();
+                })
+            }
+          }}
+        >
+        Excluir Personagem
+      </button>
+    </div>
+  )
 }
 
 function RpgContainer({currentUser, id}: {currentUser: string, id: number}) {
@@ -230,8 +253,8 @@ function RpgContainer({currentUser, id}: {currentUser: string, id: number}) {
       <div className="actions-container">
         {ActionButton({ text: "Atacar", onClick: () => actionCon(id, "BATTLE_ACTION", "atacar", currentUser) })}
         {ActionButton({ text: "Defender", onClick: () => actionCon(id, "BATTLE_ACTION", "defender", currentUser) })}
-        {ActionButton({ text: "Fugir", onClick: () => actionCon(id, "BATTLE_ACTION", "fugir", currentUser) })}
         {ActionButton({ text: "Poder", onClick: () => actionCon(id, "BATTLE_ACTION", "poder", currentUser) })}
+        {ActionButton({ text: "Fugir", onClick: () => actionCon(id, "BATTLE_ACTION", "fugir", currentUser) })}
       </div>
     </div>
   )
@@ -346,20 +369,15 @@ useEffect(() => {
                 setSelectedCharacter(char);
                 setIsInArena(false);
               }} 
-              selectedCharId={selectedCharacter?.id.toString()} 
+              selectedCharId={selectedCharacter?.id.toString()}
             />
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px'}}>
                 <button 
-                    className="user-creation-button"
+                    className="user-creation-button user-selection-button"
                     onClick={handleEnterArena}
                     disabled={!canEnterArena}
                     style={{ 
-                        width: '100%', 
-                        marginLeft: '0',
-                        height: '50px', 
-                        fontSize: '18px',
-                        fontWeight: 'bold',
                         backgroundColor: isInArena ? '#28a745' : 'transparent',
                         color: isInArena ? 'white' : 'white',
                         borderColor: isInArena ? '#28a745' : 'white',
@@ -377,9 +395,26 @@ useEffect(() => {
                 )}
             </div>
         </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', width: '500px' }}>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', width: '500px', gap: '20px', justifyContent: 'space-between' }}>
             <CharacterCreationContainer/>
+            <div style={{ position: 'relative'}}>
+                {(!selectedCharacter || isInArena) && (
+                    <div className="lock-overlay" style={{top: '20px'}}>
+                        <h2 style={{ color: '#095184', textShadow: '1px 1px 2px white', fontSize: '28px', textAlign: 'center' }}>
+                            {isInArena ? "PERSONAGEM NA ARENA" : ""}
+                            {!selectedCharacter ? "SELECIONE UM PERSONAGEM" : ""}
+                        </h2>
+                    </div>
+                )}
+                
+            <CharacterUpdateContainer
+              onSelect={(char) => {
+                setSelectedCharacter(null);
+              }} 
+              selectedCharId={selectedCharacter?.id.toString()}
+            />
+            </div>
         </div>
 
       </div>
@@ -388,27 +423,16 @@ useEffect(() => {
         
         <ChatContainer currentUser={userName !== "" ? userName : "Anônimo"}/>
 
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative'}}>
             {!isInArena && (
-                <div style={{
-                    position: 'absolute',
-                    top: 0, left: 0, right: 0, bottom: 0,
-                    backgroundColor: 'rgba(255,255,255,0.7)',
-                    zIndex: 10,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderRadius: '10px',
-                    backdropFilter: 'blur(3px)'
-                }}>
-                    <h2 style={{ color: '#095184', textShadow: '1px 1px 2px white', fontSize: '28px', textAlign: 'center' }}>
+                <div className="lock-overlay" style={{top: '700px', borderRadius: '0 0 10px 10px'}}>
+                    <h2 style={{ color: '#095184', textShadow: '1px 1px 2px white', fontSize: '20px', textAlign: 'center' }}>
                         BLOQUEADO <br/> Entre na Arena
                     </h2>
                 </div>
             )}
             
-            <RpgContainer currentUser={currentEntityName} id={selectedCharacter?.id == undefined ? 0 : selectedCharacter.id}/>
+          <RpgContainer currentUser={currentEntityName} id={selectedCharacter?.id == undefined ? 0 : selectedCharacter.id}/>
         </div>
 
       </div>

@@ -123,3 +123,30 @@ export const characterGetCon = async () => {
   }
 }
 
+export const characterDeleteCon = async (id: number) => {
+  try {
+    console.log("Tentando excluir personagem com ID:", id);
+    const response = await fetch(`${ApiUrl}/character/delete/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true'
+      }
+    });
+    
+    const data = await response.json();
+if (response.ok) {
+      console.log("Sucesso:", data.mensagem);
+      alert(data.mensagem);
+      
+    } else {
+      console.error("Falha ao deletar:", data.mensagem);
+      alert("Erro ao deletar: " + data.mensagem);
+    }
+
+  } catch (error) {
+    console.error("Erro de conexão com o servidor:", error);
+    alert("O servidor está offline ou deu erro de rede!");
+  }
+}
+
